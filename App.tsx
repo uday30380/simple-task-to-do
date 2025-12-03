@@ -12,6 +12,13 @@ const App: React.FC = () => {
   return (
     <div className="min-h-screen bg-slate-950 text-white flex flex-col font-sans selection:bg-indigo-500/30">
       
+      {/* Watermark */}
+      <div className="fixed bottom-20 right-4 z-40 pointer-events-none select-none opacity-40">
+        <p className="text-[10px] font-black text-slate-600 uppercase tracking-widest drop-shadow-md">
+          Created by: VEMPATI UDAY KIRAN
+        </p>
+      </div>
+
       {/* Main Content Area */}
       <main className="flex-1 w-full overflow-y-auto overflow-x-hidden pb-24">
         {currentView === 'home' && <TodoDashboard />}
