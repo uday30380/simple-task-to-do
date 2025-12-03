@@ -1,0 +1,5 @@
+{
+  "name": "SimpleTasks",
+  "description": "A clean, responsive, and offline-capable To-Do list application allowing users to manage tasks with filtering and persistence.",
+  "requestFramePermissions": []
+}
