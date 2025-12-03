@@ -29,10 +29,6 @@ export interface Task {
   attachments: Attachment[];
 }
 
-export interface AppSettings {
-  darkMode: boolean;
-}
-
 export interface IconProps {
   className?: string;
   size?: number;

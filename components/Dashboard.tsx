@@ -19,32 +19,32 @@ const Dashboard: React.FC<DashboardProps> = ({ tasks }) => {
   const strokeDashoffset = circumference - (completionRate / 100) * circumference;
 
   return (
-    <div className="bg-white dark:bg-gray-800 rounded-2xl p-6 shadow-sm border border-gray-100 dark:border-gray-700 mb-8 hover:shadow-md transition-shadow duration-300">
+    <div className="bg-white dark:bg-slate-800 rounded-3xl p-6 shadow-xl shadow-slate-200/50 dark:shadow-none border border-slate-100 dark:border-slate-700/50 mb-10 hover:shadow-2xl transition-all duration-500">
       <div className="flex flex-col sm:flex-row items-center justify-between gap-8">
         
         {/* Stats Grid */}
         <div className="flex-1 w-full grid grid-cols-2 sm:grid-cols-4 gap-4">
-          <div className="bg-blue-50 dark:bg-blue-900/20 p-4 rounded-xl flex flex-col items-center justify-center text-center transition-transform hover:scale-105 duration-200">
-            <p className="text-xs text-blue-600 dark:text-blue-400 font-bold uppercase tracking-wider mb-1">Total</p>
-            <p className="text-2xl font-extrabold text-gray-800 dark:text-white">{total}</p>
+          <div className="group bg-slate-50 dark:bg-slate-700/50 p-4 rounded-2xl flex flex-col items-center justify-center text-center transition-all hover:bg-blue-50 dark:hover:bg-blue-900/20 cursor-default">
+            <p className="text-xs text-slate-500 dark:text-slate-400 group-hover:text-blue-600 dark:group-hover:text-blue-400 font-bold uppercase tracking-wider mb-1 transition-colors">Total</p>
+            <p className="text-3xl font-black text-slate-800 dark:text-white group-hover:scale-110 transition-transform">{total}</p>
           </div>
-          <div className="bg-green-50 dark:bg-green-900/20 p-4 rounded-xl flex flex-col items-center justify-center text-center transition-transform hover:scale-105 duration-200">
-            <p className="text-xs text-green-600 dark:text-green-400 font-bold uppercase tracking-wider mb-1">Done</p>
-            <p className="text-2xl font-extrabold text-gray-800 dark:text-white">{completed}</p>
+          <div className="group bg-slate-50 dark:bg-slate-700/50 p-4 rounded-2xl flex flex-col items-center justify-center text-center transition-all hover:bg-green-50 dark:hover:bg-green-900/20 cursor-default">
+            <p className="text-xs text-slate-500 dark:text-slate-400 group-hover:text-green-600 dark:group-hover:text-green-400 font-bold uppercase tracking-wider mb-1 transition-colors">Done</p>
+            <p className="text-3xl font-black text-slate-800 dark:text-white group-hover:scale-110 transition-transform">{completed}</p>
           </div>
-          <div className="bg-amber-50 dark:bg-amber-900/20 p-4 rounded-xl flex flex-col items-center justify-center text-center transition-transform hover:scale-105 duration-200">
-            <p className="text-xs text-amber-600 dark:text-amber-400 font-bold uppercase tracking-wider mb-1">Pending</p>
-            <p className="text-2xl font-extrabold text-gray-800 dark:text-white">{pending}</p>
+          <div className="group bg-slate-50 dark:bg-slate-700/50 p-4 rounded-2xl flex flex-col items-center justify-center text-center transition-all hover:bg-amber-50 dark:hover:bg-amber-900/20 cursor-default">
+            <p className="text-xs text-slate-500 dark:text-slate-400 group-hover:text-amber-600 dark:group-hover:text-amber-400 font-bold uppercase tracking-wider mb-1 transition-colors">Pending</p>
+            <p className="text-3xl font-black text-slate-800 dark:text-white group-hover:scale-110 transition-transform">{pending}</p>
           </div>
-           <div className="bg-rose-50 dark:bg-rose-900/20 p-4 rounded-xl flex flex-col items-center justify-center text-center transition-transform hover:scale-105 duration-200">
-            <p className="text-xs text-rose-600 dark:text-rose-400 font-bold uppercase tracking-wider mb-1">Overdue</p>
-            <p className="text-2xl font-extrabold text-gray-800 dark:text-white">{overdue}</p>
+           <div className="group bg-slate-50 dark:bg-slate-700/50 p-4 rounded-2xl flex flex-col items-center justify-center text-center transition-all hover:bg-rose-50 dark:hover:bg-rose-900/20 cursor-default">
+            <p className="text-xs text-slate-500 dark:text-slate-400 group-hover:text-rose-600 dark:group-hover:text-rose-400 font-bold uppercase tracking-wider mb-1 transition-colors">Overdue</p>
+            <p className="text-3xl font-black text-slate-800 dark:text-white group-hover:scale-110 transition-transform">{overdue}</p>
           </div>
         </div>
 
         {/* Animated Circular Progress */}
-        <div className="relative w-32 h-32 flex-shrink-0">
-          <svg className="w-full h-full transform -rotate-90 drop-shadow-sm">
+        <div className="relative w-36 h-36 flex-shrink-0 bg-slate-50 dark:bg-slate-700/30 rounded-full p-2">
+          <svg className="w-full h-full transform -rotate-90 drop-shadow-md">
             {/* Background Circle */}
             <circle
               cx="50%"
@@ -53,7 +53,7 @@ const Dashboard: React.FC<DashboardProps> = ({ tasks }) => {
               stroke="currentColor"
               strokeWidth="8"
               fill="transparent"
-              className="text-gray-100 dark:text-gray-600 transition-colors"
+              className="text-slate-200 dark:text-slate-600 transition-colors"
             />
             {/* Progress Circle */}
             <circle
@@ -70,7 +70,7 @@ const Dashboard: React.FC<DashboardProps> = ({ tasks }) => {
             />
           </svg>
           <div className="absolute inset-0 flex flex-col items-center justify-center">
-            <span className="text-2xl font-bold text-gray-800 dark:text-white">{completionRate}%</span>
+            <span className="text-3xl font-black text-slate-700 dark:text-white tracking-tighter">{completionRate}%</span>
           </div>
         </div>
       </div>

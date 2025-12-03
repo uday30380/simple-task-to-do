@@ -1,14 +1,13 @@
 import React, { useState, useEffect, useMemo, useRef } from 'react';
-import { Task, FilterType, Priority, Category, Attachment, AppSettings } from './types';
+import { Task, FilterType, Priority, Category, Attachment } from './types';
 import TaskItem from './components/TaskItem';
 import FilterTabs from './components/FilterTabs';
 import Dashboard from './components/Dashboard';
-import { MicIcon, SunIcon, MoonIcon, UploadIcon, SearchIcon, FilterIcon } from './components/Icons';
-import { loadTasks, saveTasks, loadSettings, saveSettings } from './utils/storage';
+import { MicIcon, UploadIcon, SearchIcon, FilterIcon } from './components/Icons';
+import { loadTasks, saveTasks } from './utils/storage';
 
 const App: React.FC = () => {
   const [tasks, setTasks] = useState<Task[]>(loadTasks);
-  const [settings, setSettings] = useState<AppSettings>(loadSettings);
   
   // Filtering & Sorting State
   const [statusFilter, setStatusFilter] = useState<FilterType>('all');
@@ -31,10 +30,6 @@ const App: React.FC = () => {
   useEffect(() => {
     saveTasks(tasks);
   }, [tasks]);
-
-  useEffect(() => {
-    saveSettings(settings);
-  }, [settings]);
 
   // Request Notification Permission on load
   useEffect(() => {
@@ -234,180 +229,221 @@ const App: React.FC = () => {
   const hasActiveFilters = statusFilter !== 'all' || searchQuery !== '' || filterCategory !== 'All' || filterPriority !== 'All';
 
   return (
-    <div className={`min-h-screen transition-colors duration-200 ${settings.darkMode ? 'dark bg-gray-900 text-white' : 'bg-gray-50 text-gray-900'}`}>
-      <div className="max-w-3xl mx-auto py-8 px-4">
+    <div className="min-h-screen bg-slate-950 text-white flex flex-col">
+      <div className="w-full max-w-[1440px] mx-auto p-4 sm:p-6 lg:p-8 flex-1 flex flex-col">
         
         {/* Header Bar */}
-        <header className="flex items-center justify-between mb-8">
+        <header className="flex items-center justify-between mb-8 pb-4 border-b border-slate-800">
           <div>
-            <h1 className="text-3xl font-bold tracking-tight">SimpleTasks</h1>
-            <p className="text-gray-500 dark:text-gray-400 text-sm">Offline & Secure</p>
-          </div>
-          <div className="flex gap-2">
-            <button onClick={() => setSettings(p => ({...p, darkMode: !p.darkMode}))} className="p-2 rounded-full bg-white dark:bg-gray-800 shadow-sm hover:bg-yellow-50 dark:hover:bg-gray-700 transition text-gray-500">
-              {settings.darkMode ? <SunIcon /> : <MoonIcon />}
-            </button>
+            <h1 className="text-3xl md:text-5xl font-black tracking-tight bg-gradient-to-r from-indigo-400 to-violet-400 bg-clip-text text-transparent pb-1">
+              Make Your Life Simple
+            </h1>
+            <p className="text-slate-500 font-medium mt-1">Efficient task management dashboard</p>
           </div>
         </header>
 
-        {/* Dashboard Stats */}
-        <Dashboard tasks={tasks} />
+        {/* Main Grid Layout */}
+        <div className="flex-1 grid grid-cols-1 lg:grid-cols-12 gap-8">
+          
+          {/* LEFT SIDEBAR (Sticky on desktop) */}
+          <div className="lg:col-span-4 space-y-8 h-fit lg:sticky lg:top-8">
+             {/* Dashboard Stats */}
+             <Dashboard tasks={tasks} />
 
-        {/* Add Task Form */}
-        <section className="mb-8">
-          <div className="relative group bg-white dark:bg-gray-700 rounded-xl shadow-lg p-1 transition-all ring-1 ring-gray-200 dark:ring-gray-600">
-            <div className="flex items-center border-b border-gray-100 dark:border-gray-600 p-2">
-              <input
-                type="text"
-                value={inputText}
-                onChange={(e) => setInputText(e.target.value)}
-                placeholder="What needs to be done?"
-                className="flex-1 px-4 py-3 bg-transparent text-lg focus:outline-none text-gray-900 dark:text-gray-100 placeholder-gray-400 dark:placeholder-gray-400"
-                onKeyDown={(e) => e.key === 'Enter' && addTask()}
-              />
-              <button onClick={handleVoiceInput} className="p-2 text-gray-400 hover:text-indigo-600 transition" title="Voice Input">
-                <MicIcon />
-              </button>
-            </div>
-            
-            {/* Extended Controls */}
-            <div className="flex flex-wrap items-center justify-between p-2 gap-2 bg-gray-50 dark:bg-gray-800 rounded-b-lg">
-              <div className="flex gap-2">
-                <select value={priority} onChange={(e) => setPriority(e.target.value as Priority)} className="text-sm bg-white dark:bg-gray-700 border-none rounded-md px-2 py-1 focus:ring-1 focus:ring-indigo-500 text-gray-700 dark:text-gray-200 shadow-sm">
-                  <option value="low">Low Priority</option>
-                  <option value="medium">Medium</option>
-                  <option value="high">High Priority</option>
-                </select>
-                <select value={category} onChange={(e) => setCategory(e.target.value as Category)} className="text-sm bg-white dark:bg-gray-700 border-none rounded-md px-2 py-1 focus:ring-1 focus:ring-indigo-500 text-gray-700 dark:text-gray-200 shadow-sm">
-                  <option value="Work">Work</option>
-                  <option value="Study">Study</option>
-                  <option value="Personal">Personal</option>
-                  <option value="Shopping">Shopping</option>
-                  <option value="Other">Other</option>
-                </select>
-                <input 
-                  type="datetime-local" 
-                  value={dueDate}
-                  onChange={(e) => setDueDate(e.target.value)}
-                  className="text-sm bg-white dark:bg-gray-700 rounded-md px-2 py-1 border-none text-gray-700 dark:text-gray-200 shadow-sm"
-                />
-                 <button onClick={() => fileInputRef.current?.click()} className="p-1.5 bg-white dark:bg-gray-700 rounded hover:bg-gray-200 dark:hover:bg-gray-600 text-gray-600 dark:text-gray-300 shadow-sm" title="Attach Image">
-                   <UploadIcon size={16}/>
-                 </button>
-                 <input type="file" ref={fileInputRef} className="hidden" accept="image/*" onChange={handleFileUpload} />
-              </div>
-              
-              <div className="flex items-center gap-2">
-                {attachments.length > 0 && <span className="text-xs text-indigo-500 font-medium">{attachments.length} file(s)</span>}
-                <button onClick={addTask} disabled={!inputText.trim()} className="bg-indigo-600 hover:bg-indigo-700 text-white px-4 py-1.5 rounded-lg text-sm font-medium transition-colors shadow-sm disabled:opacity-50">
-                  Add Task
-                </button>
-              </div>
-            </div>
-          </div>
-        </section>
+             {/* Add Task Card */}
+             <div className="bg-slate-900 rounded-3xl shadow-xl shadow-black/50 border border-slate-800/60 overflow-hidden relative group">
+                {/* Glow Effect */}
+                <div className="absolute top-0 left-0 w-full h-1 bg-gradient-to-r from-indigo-500 via-purple-500 to-pink-500 opacity-70 group-hover:opacity-100 transition-opacity"></div>
+                
+                <div className="p-6 space-y-4">
+                  <h3 className="text-lg font-bold text-white flex items-center gap-2">
+                    <span className="w-2 h-6 bg-indigo-500 rounded-full"></span>
+                    New Task
+                  </h3>
+                  
+                  <div className="relative">
+                     <textarea
+                      value={inputText}
+                      onChange={(e) => setInputText(e.target.value)}
+                      placeholder="What needs to be done?"
+                      rows={3}
+                      className="w-full px-4 py-3 bg-slate-950/50 border border-slate-800 rounded-xl text-lg font-medium focus:outline-none focus:ring-2 focus:ring-indigo-500/50 text-white placeholder-slate-600 resize-none transition-all"
+                      onKeyDown={(e) => {
+                        if(e.key === 'Enter' && !e.shiftKey) {
+                          e.preventDefault();
+                          addTask();
+                        }
+                      }}
+                    />
+                     <button 
+                        onClick={handleVoiceInput} 
+                        className="absolute bottom-3 right-3 p-2 text-slate-500 hover:text-indigo-400 transition-colors"
+                        title="Voice Input"
+                      >
+                        <MicIcon size={20} />
+                      </button>
+                  </div>
 
-        {/* Filter Tabs (Status) */}
-        <FilterTabs 
-          currentFilter={statusFilter} 
-          onFilterChange={setStatusFilter} 
-          counts={counts} 
-          onClear={clearAllFilters}
-          hasActiveFilters={hasActiveFilters}
-        />
+                  <div className="grid grid-cols-2 gap-2">
+                     <select value={priority} onChange={(e) => setPriority(e.target.value as Priority)} className="w-full bg-slate-950/50 border border-slate-800 rounded-lg px-3 py-2 text-sm text-slate-300 focus:outline-none focus:border-indigo-500 transition-colors cursor-pointer">
+                        <option value="low">Low Priority</option>
+                        <option value="medium">Medium</option>
+                        <option value="high">High Priority</option>
+                      </select>
 
-        {/* Search & Advanced Sort/Filter Bar */}
-        <div className="flex flex-col sm:flex-row gap-3 mb-6 animate-enter">
-            <div className="flex-1 relative group">
-                <div className="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none text-gray-400 group-focus-within:text-indigo-500 transition-colors">
-                    <SearchIcon size={18} />
-                </div>
-                <input 
-                    type="text" 
-                    placeholder="Search tasks..." 
-                    value={searchQuery}
-                    onChange={(e) => setSearchQuery(e.target.value)}
-                    className="w-full pl-10 pr-4 py-2 bg-white dark:bg-gray-700 border border-gray-200 dark:border-gray-600 rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-indigo-500 dark:text-white transition-all shadow-sm"
-                />
-            </div>
-            
-            <div className="flex gap-2 overflow-x-auto pb-1 sm:pb-0">
-                <div className="relative">
-                    <div className="absolute inset-y-0 left-0 pl-2 flex items-center pointer-events-none text-gray-500">
-                       <FilterIcon size={14} />
-                    </div>
-                    <select 
-                        value={filterCategory} 
-                        onChange={(e) => setFilterCategory(e.target.value as Category | 'All')}
-                        className="pl-8 pr-4 py-2 bg-white dark:bg-gray-700 border border-gray-200 dark:border-gray-600 rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-indigo-500 dark:text-white shadow-sm appearance-none cursor-pointer hover:bg-gray-50 dark:hover:bg-gray-600 transition-colors min-w-[100px]"
-                    >
-                        <option value="All">All Categories</option>
+                      <select value={category} onChange={(e) => setCategory(e.target.value as Category)} className="w-full bg-slate-950/50 border border-slate-800 rounded-lg px-3 py-2 text-sm text-slate-300 focus:outline-none focus:border-indigo-500 transition-colors cursor-pointer">
                         <option value="Work">Work</option>
                         <option value="Study">Study</option>
                         <option value="Personal">Personal</option>
                         <option value="Shopping">Shopping</option>
                         <option value="Other">Other</option>
-                    </select>
+                      </select>
+                  </div>
+                  
+                  <div className="grid grid-cols-12 gap-2">
+                    <input 
+                      type="datetime-local" 
+                      value={dueDate}
+                      onChange={(e) => setDueDate(e.target.value)}
+                      className="col-span-9 bg-slate-950/50 border border-slate-800 rounded-lg px-3 py-2 text-sm text-slate-400 focus:outline-none focus:border-indigo-500 transition-colors"
+                    />
+                    <div className="col-span-3">
+                       <button onClick={() => fileInputRef.current?.click()} className="w-full h-full flex items-center justify-center bg-slate-950/50 border border-slate-800 rounded-lg hover:bg-slate-800 text-slate-400 hover:text-indigo-400 transition-colors" title="Attach Image">
+                         <UploadIcon size={18}/>
+                       </button>
+                       <input type="file" ref={fileInputRef} className="hidden" accept="image/*" onChange={handleFileUpload} />
+                    </div>
+                  </div>
+
+                  {attachments.length > 0 && (
+                    <div className="flex items-center gap-2 text-xs text-indigo-400 bg-indigo-950/30 px-3 py-2 rounded-lg border border-indigo-900/50">
+                       <span className="font-bold">{attachments.length}</span> file(s) attached
+                    </div>
+                  )}
+
+                  <button 
+                    onClick={addTask} 
+                    disabled={!inputText.trim()} 
+                    className="w-full bg-indigo-600 hover:bg-indigo-500 text-white py-3 rounded-xl font-bold text-sm shadow-lg shadow-indigo-900/20 disabled:opacity-50 disabled:shadow-none transition-all active:scale-[0.98]"
+                  >
+                    Create Task
+                  </button>
                 </div>
+             </div>
+          </div>
 
-                <select 
-                    value={filterPriority} 
-                    onChange={(e) => setFilterPriority(e.target.value as Priority | 'All')}
-                    className="px-3 py-2 bg-white dark:bg-gray-700 border border-gray-200 dark:border-gray-600 rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-indigo-500 dark:text-white shadow-sm cursor-pointer hover:bg-gray-50 dark:hover:bg-gray-600 transition-colors"
-                >
-                    <option value="All">All Priorities</option>
-                    <option value="low">Low</option>
-                    <option value="medium">Medium</option>
-                    <option value="high">High</option>
-                </select>
+          {/* RIGHT CONTENT (List) */}
+          <div className="lg:col-span-8 flex flex-col gap-6">
+             
+             {/* Controls Bar */}
+             <div className="bg-slate-900/50 p-4 rounded-3xl border border-slate-800 backdrop-blur-sm sticky top-2 z-20">
+                
+                {/* Status Tabs */}
+                <div className="mb-4">
+                  <FilterTabs 
+                    currentFilter={statusFilter} 
+                    onFilterChange={setStatusFilter} 
+                    counts={counts} 
+                    onClear={clearAllFilters}
+                    hasActiveFilters={hasActiveFilters}
+                  />
+                </div>
+                
+                {/* Search & Sort */}
+                <div className="flex flex-col md:flex-row gap-3">
+                    <div className="flex-1 relative group">
+                        <div className="absolute inset-y-0 left-0 pl-3.5 flex items-center pointer-events-none text-slate-500 group-focus-within:text-indigo-400 transition-colors">
+                            <SearchIcon size={20} />
+                        </div>
+                        <input 
+                            type="text" 
+                            placeholder="Search tasks..." 
+                            value={searchQuery}
+                            onChange={(e) => setSearchQuery(e.target.value)}
+                            className="w-full pl-11 pr-4 py-2.5 bg-slate-950 border border-slate-800 rounded-xl text-sm font-medium focus:outline-none focus:ring-1 focus:ring-indigo-500 text-slate-200 placeholder-slate-600 transition-all"
+                        />
+                    </div>
+                    
+                    <div className="flex gap-2 overflow-x-auto pb-2 md:pb-0 no-scrollbar">
+                         <div className="relative min-w-[150px]">
+                            <div className="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none text-slate-500">
+                               <FilterIcon size={16} />
+                            </div>
+                            <select 
+                                value={filterCategory} 
+                                onChange={(e) => setFilterCategory(e.target.value as Category | 'All')}
+                                className="w-full pl-9 pr-8 py-2.5 bg-slate-950 border border-slate-800 rounded-xl text-sm font-medium focus:outline-none focus:border-indigo-500 text-slate-300 appearance-none cursor-pointer hover:bg-slate-900 transition-colors"
+                            >
+                                <option value="All">All Categories</option>
+                                <option value="Work">Work</option>
+                                <option value="Study">Study</option>
+                                <option value="Personal">Personal</option>
+                                <option value="Shopping">Shopping</option>
+                                <option value="Other">Other</option>
+                            </select>
+                        </div>
 
-                <select 
-                    value={sortBy} 
-                    onChange={(e) => setSortBy(e.target.value as any)}
-                    className="px-3 py-2 bg-white dark:bg-gray-700 border border-gray-200 dark:border-gray-600 rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-indigo-500 dark:text-white shadow-sm cursor-pointer hover:bg-gray-50 dark:hover:bg-gray-600 transition-colors"
-                >
-                    <option value="createdAt">Newest First</option>
-                    <option value="dueDate">Due Date</option>
-                    <option value="priority">Priority (High-Low)</option>
-                </select>
-            </div>
+                        <select 
+                            value={filterPriority} 
+                            onChange={(e) => setFilterPriority(e.target.value as Priority | 'All')}
+                            className="px-4 py-2.5 bg-slate-950 border border-slate-800 rounded-xl text-sm font-medium focus:outline-none focus:border-indigo-500 text-slate-300 cursor-pointer hover:bg-slate-900 transition-colors"
+                        >
+                            <option value="All">All Priorities</option>
+                            <option value="low">Low</option>
+                            <option value="medium">Medium</option>
+                            <option value="high">High</option>
+                        </select>
+
+                        <select 
+                            value={sortBy} 
+                            onChange={(e) => setSortBy(e.target.value as any)}
+                            className="px-4 py-2.5 bg-slate-950 border border-slate-800 rounded-xl text-sm font-medium focus:outline-none focus:border-indigo-500 text-slate-300 cursor-pointer hover:bg-slate-900 transition-colors"
+                        >
+                            <option value="createdAt">Newest First</option>
+                            <option value="dueDate">Due Date</option>
+                            <option value="priority">Priority</option>
+                        </select>
+                    </div>
+                </div>
+             </div>
+
+             {/* Task List */}
+             <div className="space-y-4 pb-20">
+                {filteredTasks.length > 0 ? (
+                  filteredTasks.map((task) => (
+                    <TaskItem
+                      key={task.id}
+                      task={task}
+                      onToggle={toggleTask}
+                      onDelete={(id) => setTasks(p => p.filter(t => t.id !== id))}
+                      onEdit={(id, updates) => setTasks(p => p.map(t => t.id === id ? {...t, ...updates} : t))}
+                      onAddSubtask={addSubtask}
+                      onToggleSubtask={toggleSubtask}
+                      onDeleteSubtask={deleteSubtask}
+                      // Drag props
+                      draggable={!searchQuery && statusFilter === 'all' && filterCategory === 'All' && filterPriority === 'All' && sortBy === 'createdAt'} 
+                      onDragStart={handleDragStart}
+                      onDragOver={handleDragEnter}
+                      onDrop={handleDrop}
+                    />
+                  ))
+                ) : (
+                   <div className="flex flex-col items-center justify-center py-24 rounded-3xl border-2 border-dashed border-slate-800/50 text-center animate-enter bg-slate-900/20">
+                     <div className="w-24 h-24 bg-slate-900 rounded-full flex items-center justify-center mb-6 shadow-inner">
+                        <SearchIcon size={40} className="text-slate-700" />
+                     </div>
+                     <p className="text-2xl font-bold text-slate-500">No tasks found</p>
+                     <p className="text-slate-600 mt-2 max-w-xs mx-auto">Tasks matching your filters will appear here.</p>
+                   </div>
+                )}
+             </div>
+          </div>
+
         </div>
 
-        {/* Task List */}
-        <section className="space-y-3">
-          {filteredTasks.length > 0 ? (
-            filteredTasks.map((task) => (
-              <TaskItem
-                key={task.id}
-                task={task}
-                onToggle={toggleTask}
-                onDelete={(id) => setTasks(p => p.filter(t => t.id !== id))}
-                onEdit={(id, updates) => setTasks(p => p.map(t => t.id === id ? {...t, ...updates} : t))}
-                onAddSubtask={addSubtask}
-                onToggleSubtask={toggleSubtask}
-                onDeleteSubtask={deleteSubtask}
-                // Drag props
-                draggable={!searchQuery && statusFilter === 'all' && filterCategory === 'All' && filterPriority === 'All' && sortBy === 'createdAt'} // Disable drag when filtered/sorted
-                onDragStart={handleDragStart}
-                onDragOver={handleDragEnter}
-                onDrop={handleDrop}
-              />
-            ))
-          ) : (
-             <div className="flex flex-col items-center justify-center py-16 px-4 rounded-xl border-2 border-dashed border-gray-200 dark:border-gray-700 text-center animate-enter">
-               <div className="w-16 h-16 bg-gray-100 dark:bg-gray-800 rounded-full flex items-center justify-center mb-4">
-                  <SearchIcon size={24} className="text-gray-400" />
-               </div>
-               <p className="text-lg font-medium text-gray-600 dark:text-gray-300">No tasks found</p>
-               <p className="text-sm text-gray-400 dark:text-gray-500 mt-1">Try adjusting your filters.</p>
-             </div>
-          )}
-        </section>
-
-        {/* Footer */}
-        <footer className="mt-12 py-6 text-center border-t border-gray-200 dark:border-gray-800/50">
-          <p className="text-sm text-gray-400 dark:text-gray-500">
-            created by <span className="font-semibold text-indigo-500 dark:text-indigo-400">Vempati Uday Kiran</span>
+        <footer className="mt-8 py-6 text-center border-t border-slate-900/50">
+          <p className="text-sm font-medium text-slate-600">
+             Created by <span className="text-indigo-500 font-bold">Vempati Uday Kiran</span>
           </p>
         </footer>
 

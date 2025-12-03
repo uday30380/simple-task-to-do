@@ -18,26 +18,26 @@ const FilterTabs: React.FC<FilterTabsProps> = ({ currentFilter, onFilterChange, 
   ];
 
   return (
-    <div className="flex flex-col sm:flex-row gap-3 mb-6">
-      <div className="flex-1 flex p-1 space-x-1 bg-gray-100/80 dark:bg-gray-800/80 rounded-xl">
+    <div className="flex flex-col sm:flex-row gap-4 mb-8">
+      <div className="flex-1 flex p-1.5 bg-slate-200/50 dark:bg-slate-800/50 rounded-2xl backdrop-blur-sm border border-slate-200/50 dark:border-slate-700/50">
         {tabs.map((tab) => (
           <button
             key={tab.id}
             onClick={() => onFilterChange(tab.id)}
             className={`
-              flex-1 flex items-center justify-center gap-2 py-2 px-3 text-sm font-medium rounded-lg transition-all duration-200
+              relative flex-1 flex items-center justify-center gap-2 py-2.5 px-4 text-sm font-medium rounded-xl transition-all duration-300 ease-out
               ${currentFilter === tab.id
-                ? 'bg-white dark:bg-gray-700 text-indigo-600 dark:text-indigo-300 shadow-sm ring-1 ring-black/5 dark:ring-white/5'
-                : 'text-gray-500 dark:text-gray-400 hover:text-gray-700 dark:hover:text-gray-200 hover:bg-gray-200/50 dark:hover:bg-gray-700/50'
+                ? 'bg-white dark:bg-slate-700 text-indigo-700 dark:text-indigo-300 shadow-md ring-1 ring-black/5 dark:ring-white/5 transform scale-[1.02]'
+                : 'text-slate-500 dark:text-slate-400 hover:text-slate-700 dark:hover:text-slate-200 hover:bg-slate-300/30 dark:hover:bg-slate-700/30'
               }
             `}
           >
             {tab.label}
             <span className={`
-              inline-flex items-center justify-center px-2 py-0.5 text-xs rounded-full transition-colors
+              inline-flex items-center justify-center px-2 py-0.5 text-xs font-bold rounded-full transition-colors duration-300
               ${currentFilter === tab.id 
-                ? 'bg-indigo-50 dark:bg-indigo-900/30 text-indigo-600 dark:text-indigo-300' 
-                : 'bg-gray-200 dark:bg-gray-700 text-gray-600 dark:text-gray-400'}
+                ? 'bg-indigo-100 dark:bg-indigo-900/50 text-indigo-700 dark:text-indigo-200' 
+                : 'bg-slate-300/50 dark:bg-slate-700 text-slate-600 dark:text-slate-400'}
             `}>
               {tab.count}
             </span>
@@ -49,7 +49,7 @@ const FilterTabs: React.FC<FilterTabsProps> = ({ currentFilter, onFilterChange, 
       {hasActiveFilters && onClear && (
         <button 
           onClick={onClear}
-          className="animate-enter flex items-center justify-center gap-1.5 px-4 py-2 text-sm font-medium text-rose-600 dark:text-rose-400 bg-rose-50 dark:bg-rose-900/20 hover:bg-rose-100 dark:hover:bg-rose-900/30 rounded-xl transition-colors"
+          className="animate-fade-in flex items-center justify-center gap-2 px-5 py-2.5 text-sm font-semibold text-rose-600 dark:text-rose-400 bg-white dark:bg-slate-800 hover:bg-rose-50 dark:hover:bg-rose-900/20 rounded-2xl transition-all duration-200 border border-slate-200 dark:border-slate-700 shadow-sm hover:shadow hover:border-rose-200 dark:hover:border-rose-800"
         >
           <XIcon size={16} />
           Clear Filters

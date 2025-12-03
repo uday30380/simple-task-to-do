@@ -1,7 +1,6 @@
-import { Task, AppSettings } from '../types';
+import { Task } from '../types';
 
 const TASKS_KEY = 'simple-tasks-data-v2';
-const SETTINGS_KEY = 'simple-tasks-settings';
 
 export const loadTasks = (): Task[] => {
   try {
@@ -28,24 +27,5 @@ export const saveTasks = (tasks: Task[]): void => {
     localStorage.setItem(TASKS_KEY, JSON.stringify(tasks));
   } catch (error) {
     console.error("Failed to save tasks", error);
-  }
-};
-
-export const loadSettings = (): AppSettings => {
-  try {
-    const stored = localStorage.getItem(SETTINGS_KEY);
-    return stored ? JSON.parse(stored) : { darkMode: false };
-  } catch {
-    return { darkMode: false };
-  }
-};
-
-export const saveSettings = (settings: AppSettings): void => {
-  localStorage.setItem(SETTINGS_KEY, JSON.stringify(settings));
-  // Apply theme immediately
-  if (settings.darkMode) {
-    document.documentElement.classList.add('dark');
-  } else {
-    document.documentElement.classList.remove('dark');
   }
 };
