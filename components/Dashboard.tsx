@@ -14,68 +14,66 @@ const Dashboard: React.FC<DashboardProps> = ({ tasks }) => {
   const completionRate = total > 0 ? Math.round((completed / total) * 100) : 0;
   
   // SVG Configuration
-  const radius = 35;
+  const radius = 40;
   const circumference = 2 * Math.PI * radius;
   const strokeDashoffset = circumference - (completionRate / 100) * circumference;
 
   return (
-    <div className="bg-white dark:bg-slate-800 rounded-3xl p-6 shadow-xl shadow-slate-200/50 dark:shadow-none border border-slate-100 dark:border-slate-700/50 mb-10 hover:shadow-2xl transition-all duration-500">
-      <div className="flex flex-col sm:flex-row items-center justify-between gap-8">
+    <div className="bg-slate-900 rounded-3xl p-6 shadow-2xl shadow-black/50 border border-slate-800 relative overflow-hidden group">
+      {/* Subtle Background Glow */}
+      <div className="absolute -top-10 -right-10 w-40 h-40 bg-indigo-500/10 rounded-full blur-3xl pointer-events-none"></div>
+      
+      <div className="flex items-center justify-between gap-4 relative z-10">
         
-        {/* Stats Grid */}
-        <div className="flex-1 w-full grid grid-cols-2 sm:grid-cols-4 gap-4">
-          <div className="group bg-slate-50 dark:bg-slate-700/50 p-4 rounded-2xl flex flex-col items-center justify-center text-center transition-all hover:bg-blue-50 dark:hover:bg-blue-900/20 cursor-default">
-            <p className="text-xs text-slate-500 dark:text-slate-400 group-hover:text-blue-600 dark:group-hover:text-blue-400 font-bold uppercase tracking-wider mb-1 transition-colors">Total</p>
-            <p className="text-3xl font-black text-slate-800 dark:text-white group-hover:scale-110 transition-transform">{total}</p>
-          </div>
-          <div className="group bg-slate-50 dark:bg-slate-700/50 p-4 rounded-2xl flex flex-col items-center justify-center text-center transition-all hover:bg-green-50 dark:hover:bg-green-900/20 cursor-default">
-            <p className="text-xs text-slate-500 dark:text-slate-400 group-hover:text-green-600 dark:group-hover:text-green-400 font-bold uppercase tracking-wider mb-1 transition-colors">Done</p>
-            <p className="text-3xl font-black text-slate-800 dark:text-white group-hover:scale-110 transition-transform">{completed}</p>
-          </div>
-          <div className="group bg-slate-50 dark:bg-slate-700/50 p-4 rounded-2xl flex flex-col items-center justify-center text-center transition-all hover:bg-amber-50 dark:hover:bg-amber-900/20 cursor-default">
-            <p className="text-xs text-slate-500 dark:text-slate-400 group-hover:text-amber-600 dark:group-hover:text-amber-400 font-bold uppercase tracking-wider mb-1 transition-colors">Pending</p>
-            <p className="text-3xl font-black text-slate-800 dark:text-white group-hover:scale-110 transition-transform">{pending}</p>
-          </div>
-           <div className="group bg-slate-50 dark:bg-slate-700/50 p-4 rounded-2xl flex flex-col items-center justify-center text-center transition-all hover:bg-rose-50 dark:hover:bg-rose-900/20 cursor-default">
-            <p className="text-xs text-slate-500 dark:text-slate-400 group-hover:text-rose-600 dark:group-hover:text-rose-400 font-bold uppercase tracking-wider mb-1 transition-colors">Overdue</p>
-            <p className="text-3xl font-black text-slate-800 dark:text-white group-hover:scale-110 transition-transform">{overdue}</p>
-          </div>
+        {/* Stats Pills Row */}
+        <div className="flex-1 flex justify-between gap-2 sm:gap-3 overflow-x-auto pb-1 no-scrollbar">
+          <StatPill label="Total" value={total} />
+          <StatPill label="Done" value={completed} />
+          <StatPill label="Pending" value={pending} />
+          <StatPill label="Overdue" value={overdue} />
         </div>
 
-        {/* Animated Circular Progress */}
-        <div className="relative w-36 h-36 flex-shrink-0 bg-slate-50 dark:bg-slate-700/30 rounded-full p-2">
-          <svg className="w-full h-full transform -rotate-90 drop-shadow-md">
-            {/* Background Circle */}
+        {/* Circular Progress Chart */}
+        <div className="relative w-28 h-28 flex-shrink-0 bg-slate-950/30 rounded-full p-2 ml-2 shadow-inner border border-slate-800/50">
+          <svg className="w-full h-full transform -rotate-90">
+             {/* Track */}
             <circle
               cx="50%"
               cy="50%"
               r={radius}
               stroke="currentColor"
-              strokeWidth="8"
+              strokeWidth="10"
               fill="transparent"
-              className="text-slate-200 dark:text-slate-600 transition-colors"
+              className="text-slate-800"
             />
-            {/* Progress Circle */}
+            {/* Indicator */}
             <circle
               cx="50%"
               cy="50%"
               r={radius}
               stroke="currentColor"
-              strokeWidth="8"
+              strokeWidth="10"
               fill="transparent"
               strokeDasharray={circumference}
               strokeDashoffset={strokeDashoffset}
               strokeLinecap="round"
-              className="text-indigo-500 dark:text-indigo-400 transition-all duration-1000 ease-out"
+              className="text-indigo-500 transition-all duration-1000 ease-out"
             />
           </svg>
-          <div className="absolute inset-0 flex flex-col items-center justify-center">
-            <span className="text-3xl font-black text-slate-700 dark:text-white tracking-tighter">{completionRate}%</span>
+          <div className="absolute inset-0 flex items-center justify-center">
+            <span className="text-2xl font-black text-white tracking-tighter">{completionRate}%</span>
           </div>
         </div>
       </div>
     </div>
   );
 };
+
+const StatPill = ({ label, value }: { label: string; value: number }) => (
+  <div className="flex-1 flex flex-col items-center justify-center bg-slate-800/80 rounded-2xl py-4 min-w-[50px] border border-slate-700/50 shadow-lg backdrop-blur-sm transition-transform hover:scale-105">
+    <p className="text-[10px] font-bold text-slate-400 uppercase tracking-wider mb-1 text-center scale-90">{label}</p>
+    <p className="text-2xl font-black text-white leading-none">{value}</p>
+  </div>
+);
 
 export default Dashboard;
