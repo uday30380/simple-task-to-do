@@ -1,6 +1,6 @@
 import React, { useState } from 'react';
 import { Task, Priority, Category } from '../types';
-import { CheckIcon, TrashIcon, EditIcon, XIcon, PlusIcon, ChevronDownIcon, ChevronRightIcon, CalendarIcon, DragIcon } from './Icons';
+import { CheckIcon, TrashIcon, EditIcon, XIcon, PlusIcon, ChevronDownIcon, ChevronRightIcon, CalendarIcon, DragIcon, CopyIcon } from './Icons';
 
 interface TaskItemProps {
   task: Task;
@@ -10,6 +10,7 @@ interface TaskItemProps {
   onAddSubtask: (taskId: string, text: string) => void;
   onToggleSubtask: (taskId: string, subtaskId: string) => void;
   onDeleteSubtask: (taskId: string, subtaskId: string) => void;
+  onDuplicate: (id: string) => void;
   // Drag & Drop props
   draggable?: boolean;
   onDragStart?: (e: React.DragEvent, id: string) => void;
@@ -55,6 +56,7 @@ const TaskItem: React.FC<TaskItemProps> = ({
   onAddSubtask,
   onToggleSubtask,
   onDeleteSubtask,
+  onDuplicate,
   draggable,
   onDragStart,
   onDragOver,
@@ -260,6 +262,9 @@ const TaskItem: React.FC<TaskItemProps> = ({
              title="Toggle Subtasks"
            >
              {isExpanded ? <ChevronDownIcon size={18} /> : <ChevronRightIcon size={18} />}
+           </button>
+           <button onClick={() => onDuplicate(task.id)} className="p-2 text-slate-400 hover:text-indigo-600 hover:bg-indigo-50 dark:hover:bg-indigo-900/30 rounded-lg transition-colors" title="Duplicate">
+             <CopyIcon size={18} />
            </button>
            <button onClick={() => !task.completed && startEdit()} disabled={task.completed} className="p-2 text-slate-400 hover:text-indigo-600 hover:bg-indigo-50 dark:hover:bg-indigo-900/30 rounded-lg transition-colors disabled:opacity-30 disabled:hover:bg-transparent" title="Edit">
              <EditIcon size={18} />

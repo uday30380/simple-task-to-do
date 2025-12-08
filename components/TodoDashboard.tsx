@@ -164,6 +164,22 @@ const TodoDashboard: React.FC = () => {
       ...t, subtasks: t.subtasks.filter(s => s.id !== subId)
     } : t));
   };
+
+  const duplicateTask = (taskId: string) => {
+    const taskToDuplicate = tasks.find(t => t.id === taskId);
+    if (!taskToDuplicate) return;
+
+    const newTask: Task = {
+      ...taskToDuplicate,
+      id: crypto.randomUUID(),
+      text: `${taskToDuplicate.text} (Copy)`,
+      createdAt: Date.now(),
+      subtasks: taskToDuplicate.subtasks.map(s => ({ ...s, id: crypto.randomUUID() })),
+      attachments: taskToDuplicate.attachments.map(a => ({ ...a, id: crypto.randomUUID() }))
+    };
+
+    setTasks(prev => [newTask, ...prev]);
+  };
   
   const clearAllFilters = () => {
     setStatusFilter('all');
@@ -416,6 +432,7 @@ const TodoDashboard: React.FC = () => {
                     onAddSubtask={addSubtask}
                     onToggleSubtask={toggleSubtask}
                     onDeleteSubtask={deleteSubtask}
+                    onDuplicate={duplicateTask}
                     // Drag props
                     draggable={!searchQuery && statusFilter === 'all' && filterCategory === 'All' && filterPriority === 'All' && sortBy === 'createdAt'} 
                     onDragStart={handleDragStart}
