@@ -3,7 +3,7 @@ import { Task, FilterType, Priority, Category, Attachment } from '../types';
 import TaskItem from './TaskItem';
 import FilterTabs from './FilterTabs';
 import Dashboard from './Dashboard';
-import { MicIcon, UploadIcon, SearchIcon, FilterIcon } from './Icons';
+import { MicIcon, UploadIcon, SearchIcon, FilterIcon, PlusIcon } from './Icons';
 import { loadTasks, saveTasks } from '../utils/storage';
 
 const TodoDashboard: React.FC = () => {
@@ -245,41 +245,48 @@ const TodoDashboard: React.FC = () => {
   const hasActiveFilters = statusFilter !== 'all' || searchQuery !== '' || filterCategory !== 'All' || filterPriority !== 'All';
 
   return (
-    <div className="animate-fade-in w-full max-w-[1440px] mx-auto p-4 sm:p-6 lg:p-8 flex-1 flex flex-col">
+    <div className="animate-fade-in w-full max-w-[1440px] mx-auto p-4 sm:p-6 lg:p-8 flex-1 flex flex-col relative z-0">
       
+      {/* Ambient Background for Home */}
+      <div className="absolute top-0 left-1/2 -translate-x-1/2 w-3/4 h-[500px] bg-indigo-600/10 blur-[120px] rounded-full pointer-events-none -z-10"></div>
+      <div className="absolute top-40 right-0 w-64 h-64 bg-purple-600/10 blur-[100px] rounded-full pointer-events-none -z-10"></div>
+
       {/* Header Bar */}
-      <header className="flex flex-col items-center justify-center mb-8 pb-4 text-center">
-        <h1 className="text-2xl md:text-4xl font-black tracking-tight bg-gradient-to-r from-indigo-400 to-violet-400 bg-clip-text text-transparent pb-1">
-          Welcome to Our Smart Daily Utility App
+      <header className="flex flex-col items-center justify-center mb-10 pb-4 text-center relative z-10">
+        <h1 className="text-3xl md:text-6xl font-black tracking-tight bg-gradient-to-b from-white via-indigo-50 to-indigo-200 bg-clip-text text-transparent pb-3 drop-shadow-sm leading-tight">
+          Welcome to Your<br className="hidden sm:block" /> Smart Daily Utility App
         </h1>
+        <div className="h-1.5 w-24 bg-gradient-to-r from-indigo-500 via-violet-500 to-fuchsia-500 rounded-full mt-4 shadow-[0_0_20px_rgba(99,102,241,0.6)]"></div>
       </header>
 
       {/* Main Grid Layout */}
-      <div className="flex-1 grid grid-cols-1 lg:grid-cols-12 gap-8">
+      <div className="flex-1 grid grid-cols-1 lg:grid-cols-12 gap-8 lg:gap-10">
         
         {/* LEFT SIDEBAR (Sticky on desktop) */}
-        <div className="lg:col-span-4 space-y-8 h-fit lg:sticky lg:top-8">
+        <div className="lg:col-span-4 space-y-8 h-fit lg:sticky lg:top-6">
            {/* Dashboard Stats */}
            <Dashboard tasks={tasks} />
 
            {/* Add Task Card */}
-           <div className="bg-slate-900 rounded-3xl shadow-xl shadow-black/50 border border-slate-800/60 overflow-hidden relative group">
-              {/* Glow Effect */}
-              <div className="absolute top-0 left-0 w-full h-1 bg-gradient-to-r from-indigo-500 via-purple-500 to-pink-500 opacity-70 group-hover:opacity-100 transition-opacity"></div>
-              
-              <div className="p-6 space-y-4">
-                <h3 className="text-lg font-bold text-white flex items-center gap-2">
-                  <span className="w-2 h-6 bg-indigo-500 rounded-full"></span>
-                  New Task
-                </h3>
+           <div className="relative group rounded-[2.5rem] p-[1px] bg-gradient-to-br from-slate-700 via-slate-800 to-slate-900 hover:from-indigo-500/40 hover:via-purple-500/40 hover:to-slate-800 transition-all duration-500 shadow-2xl shadow-black/50">
+              <div className="bg-slate-950/90 backdrop-blur-2xl rounded-[2.5rem] p-6 sm:p-8 h-full relative overflow-hidden">
                 
-                <div className="relative">
+                {/* Header */}
+                <div className="flex items-center gap-3 mb-6">
+                  <div className="flex items-center justify-center w-10 h-10 rounded-xl bg-indigo-500/10 text-indigo-400 border border-indigo-500/20 shadow-[0_0_15px_rgba(99,102,241,0.15)]">
+                    <PlusIcon size={20} />
+                  </div>
+                  <h3 className="text-xl font-bold text-white tracking-wide">Create Task</h3>
+                </div>
+                
+                <div className="relative group/input mb-5">
+                   <div className="absolute -inset-0.5 bg-gradient-to-r from-indigo-500 to-purple-600 rounded-2xl opacity-0 group-focus-within/input:opacity-50 blur transition duration-500"></div>
                    <textarea
                     value={inputText}
                     onChange={(e) => setInputText(e.target.value)}
                     placeholder="What needs to be done?"
                     rows={3}
-                    className="w-full px-4 py-3 bg-slate-950/50 border border-slate-800 rounded-xl text-lg font-medium focus:outline-none focus:ring-2 focus:ring-indigo-500/50 text-white placeholder-slate-600 resize-none transition-all"
+                    className="relative w-full px-5 py-4 bg-slate-900/50 border border-slate-700/50 rounded-xl text-lg font-medium focus:outline-none focus:bg-slate-900 text-white placeholder-slate-500 resize-none transition-all shadow-inner"
                     onKeyDown={(e) => {
                       if(e.key === 'Enter' && !e.shiftKey) {
                         e.preventDefault();
@@ -289,46 +296,70 @@ const TodoDashboard: React.FC = () => {
                   />
                    <button 
                       onClick={handleVoiceInput} 
-                      className="absolute bottom-3 right-3 p-2 text-slate-500 hover:text-indigo-400 transition-colors"
+                      className="absolute bottom-3 right-3 p-2 text-slate-500 hover:text-indigo-400 hover:bg-indigo-500/10 rounded-lg transition-all"
                       title="Voice Input"
                     >
                       <MicIcon size={20} />
                     </button>
                 </div>
 
-                <div className="grid grid-cols-2 gap-2">
-                   <select value={priority} onChange={(e) => setPriority(e.target.value as Priority)} className="w-full bg-slate-950/50 border border-slate-800 rounded-lg px-3 py-2 text-sm text-slate-300 focus:outline-none focus:border-indigo-500 transition-colors cursor-pointer">
-                      <option value="low">Low Priority</option>
-                      <option value="medium">Medium</option>
-                      <option value="high">High Priority</option>
-                    </select>
+                {/* Controls Grid */}
+                <div className="space-y-4">
+                  <div className="grid grid-cols-2 gap-3">
+                    <div className="space-y-1.5">
+                        <label className="text-[10px] font-bold text-slate-500 uppercase tracking-wider ml-1">Priority</label>
+                        <div className="relative">
+                          <select value={priority} onChange={(e) => setPriority(e.target.value as Priority)} className="w-full bg-slate-900 border border-slate-800 rounded-xl px-4 py-3 text-sm text-slate-300 focus:outline-none focus:border-indigo-500/50 focus:ring-1 focus:ring-indigo-500/50 transition-all cursor-pointer hover:bg-slate-800 appearance-none">
+                            <option value="low">Low</option>
+                            <option value="medium">Medium</option>
+                            <option value="high">High</option>
+                          </select>
+                          <div className="absolute right-3 top-1/2 -translate-y-1/2 pointer-events-none text-slate-500">
+                             <FilterIcon size={12} className="rotate-180 opacity-50"/>
+                          </div>
+                        </div>
+                    </div>
 
-                    <select value={category} onChange={(e) => setCategory(e.target.value as Category)} className="w-full bg-slate-950/50 border border-slate-800 rounded-lg px-3 py-2 text-sm text-slate-300 focus:outline-none focus:border-indigo-500 transition-colors cursor-pointer">
-                      <option value="Work">Work</option>
-                      <option value="Study">Study</option>
-                      <option value="Personal">Personal</option>
-                      <option value="Shopping">Shopping</option>
-                      <option value="Other">Other</option>
-                    </select>
-                </div>
-                
-                <div className="grid grid-cols-12 gap-2">
-                  <input 
-                    type="datetime-local" 
-                    value={dueDate}
-                    onChange={(e) => setDueDate(e.target.value)}
-                    className="col-span-9 bg-slate-950/50 border border-slate-800 rounded-lg px-3 py-2 text-sm text-slate-400 focus:outline-none focus:border-indigo-500 transition-colors"
-                  />
-                  <div className="col-span-3">
-                     <button onClick={() => fileInputRef.current?.click()} className="w-full h-full flex items-center justify-center bg-slate-950/50 border border-slate-800 rounded-lg hover:bg-slate-800 text-slate-400 hover:text-indigo-400 transition-colors" title="Attach Image">
-                       <UploadIcon size={18}/>
-                     </button>
-                     <input type="file" ref={fileInputRef} className="hidden" accept="image/*" onChange={handleFileUpload} />
+                    <div className="space-y-1.5">
+                        <label className="text-[10px] font-bold text-slate-500 uppercase tracking-wider ml-1">Category</label>
+                        <div className="relative">
+                          <select value={category} onChange={(e) => setCategory(e.target.value as Category)} className="w-full bg-slate-900 border border-slate-800 rounded-xl px-4 py-3 text-sm text-slate-300 focus:outline-none focus:border-indigo-500/50 focus:ring-1 focus:ring-indigo-500/50 transition-all cursor-pointer hover:bg-slate-800 appearance-none">
+                            <option value="Work">Work</option>
+                            <option value="Study">Study</option>
+                            <option value="Personal">Personal</option>
+                            <option value="Shopping">Shopping</option>
+                            <option value="Other">Other</option>
+                          </select>
+                           <div className="absolute right-3 top-1/2 -translate-y-1/2 pointer-events-none text-slate-500">
+                             <FilterIcon size={12} className="rotate-180 opacity-50"/>
+                          </div>
+                        </div>
+                    </div>
+                  </div>
+                  
+                  <div className="grid grid-cols-12 gap-3">
+                    <div className="col-span-9 space-y-1.5">
+                      <label className="text-[10px] font-bold text-slate-500 uppercase tracking-wider ml-1">Due Date</label>
+                      <input 
+                        type="datetime-local" 
+                        value={dueDate}
+                        onChange={(e) => setDueDate(e.target.value)}
+                        className="w-full bg-slate-900 border border-slate-800 rounded-xl px-4 py-3 text-sm text-slate-400 focus:outline-none focus:border-indigo-500/50 focus:ring-1 focus:ring-indigo-500/50 transition-all cursor-pointer"
+                      />
+                    </div>
+                    <div className="col-span-3 space-y-1.5">
+                      <label className="text-[10px] font-bold text-slate-500 uppercase tracking-wider ml-1 opacity-0">Att</label>
+                      <button onClick={() => fileInputRef.current?.click()} className="w-full h-[46px] flex items-center justify-center bg-slate-900 border border-slate-800 rounded-xl hover:bg-slate-800 text-slate-400 hover:text-indigo-400 hover:border-indigo-500/30 transition-all active:scale-95" title="Attach Image">
+                        <UploadIcon size={20}/>
+                      </button>
+                      <input type="file" ref={fileInputRef} className="hidden" accept="image/*" onChange={handleFileUpload} />
+                    </div>
                   </div>
                 </div>
 
                 {attachments.length > 0 && (
-                  <div className="flex items-center gap-2 text-xs text-indigo-400 bg-indigo-950/30 px-3 py-2 rounded-lg border border-indigo-900/50">
+                  <div className="mt-4 flex items-center gap-3 text-xs text-indigo-300 bg-indigo-500/10 px-4 py-3 rounded-xl border border-indigo-500/20 shadow-sm animate-fade-in">
+                     <div className="w-2 h-2 rounded-full bg-indigo-400 animate-pulse"></div>
                      <span className="font-bold">{attachments.length}</span> file(s) attached
                   </div>
                 )}
@@ -336,7 +367,7 @@ const TodoDashboard: React.FC = () => {
                 <button 
                   onClick={addTask} 
                   disabled={!inputText.trim()} 
-                  className="w-full bg-indigo-600 hover:bg-indigo-500 text-white py-3 rounded-xl font-bold text-sm shadow-lg shadow-indigo-900/20 disabled:opacity-50 disabled:shadow-none transition-all active:scale-[0.98]"
+                  className="w-full mt-6 bg-gradient-to-r from-indigo-600 via-indigo-600 to-violet-600 hover:from-indigo-500 hover:to-violet-500 text-white py-4 rounded-xl font-bold text-sm shadow-lg shadow-indigo-900/40 disabled:opacity-50 disabled:shadow-none transition-all transform active:scale-[0.98] border-t border-white/10"
                 >
                   Create Task
                 </button>
@@ -347,11 +378,11 @@ const TodoDashboard: React.FC = () => {
         {/* RIGHT CONTENT (List) */}
         <div className="lg:col-span-8 flex flex-col gap-6">
            
-           {/* Controls Bar */}
-           <div className="bg-slate-900/50 p-4 rounded-3xl border border-slate-800 backdrop-blur-sm sticky top-2 z-20">
+           {/* Controls Bar - Floating Glass */}
+           <div className="bg-slate-900/80 p-5 rounded-[2rem] border border-slate-800/80 backdrop-blur-2xl shadow-2xl sticky top-6 z-30 transition-all hover:border-slate-700/50">
               
               {/* Status Tabs */}
-              <div className="mb-4">
+              <div className="mb-5">
                 <FilterTabs 
                   currentFilter={statusFilter} 
                   onFilterChange={setStatusFilter} 
@@ -362,9 +393,9 @@ const TodoDashboard: React.FC = () => {
               </div>
               
               {/* Search & Sort */}
-              <div className="flex flex-col md:flex-row gap-3">
+              <div className="flex flex-col md:flex-row gap-4">
                   <div className="flex-1 relative group">
-                      <div className="absolute inset-y-0 left-0 pl-3.5 flex items-center pointer-events-none text-slate-500 group-focus-within:text-indigo-400 transition-colors">
+                      <div className="absolute inset-y-0 left-0 pl-4 flex items-center pointer-events-none text-slate-500 group-focus-within:text-indigo-400 transition-colors">
                           <SearchIcon size={20} />
                       </div>
                       <input 
@@ -372,19 +403,19 @@ const TodoDashboard: React.FC = () => {
                           placeholder="Search tasks..." 
                           value={searchQuery}
                           onChange={(e) => setSearchQuery(e.target.value)}
-                          className="w-full pl-11 pr-4 py-2.5 bg-slate-950 border border-slate-800 rounded-xl text-sm font-medium focus:outline-none focus:ring-1 focus:ring-indigo-500 text-slate-200 placeholder-slate-600 transition-all"
+                          className="w-full pl-12 pr-4 py-3 bg-slate-950/50 border border-slate-800 rounded-2xl text-sm font-medium focus:outline-none focus:ring-2 focus:ring-indigo-500/30 focus:border-indigo-500/50 focus:bg-slate-950 text-slate-200 placeholder-slate-600 transition-all shadow-inner"
                       />
                   </div>
                   
-                  <div className="flex gap-2 overflow-x-auto pb-2 md:pb-0 no-scrollbar">
-                       <div className="relative min-w-[150px]">
-                          <div className="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none text-slate-500">
+                  <div className="flex gap-3 overflow-x-auto pb-2 md:pb-0 no-scrollbar">
+                       <div className="relative min-w-[160px]">
+                          <div className="absolute inset-y-0 left-0 pl-3.5 flex items-center pointer-events-none text-slate-500">
                              <FilterIcon size={16} />
                           </div>
                           <select 
                               value={filterCategory} 
                               onChange={(e) => setFilterCategory(e.target.value as Category | 'All')}
-                              className="w-full pl-9 pr-8 py-2.5 bg-slate-950 border border-slate-800 rounded-xl text-sm font-medium focus:outline-none focus:border-indigo-500 text-slate-300 appearance-none cursor-pointer hover:bg-slate-900 transition-colors"
+                              className="w-full pl-10 pr-8 py-3 bg-slate-950/50 border border-slate-800 rounded-2xl text-sm font-medium focus:outline-none focus:ring-2 focus:ring-indigo-500/30 text-slate-300 appearance-none cursor-pointer hover:bg-slate-900 transition-colors shadow-sm"
                           >
                               <option value="All">All Categories</option>
                               <option value="Work">Work</option>
@@ -398,7 +429,7 @@ const TodoDashboard: React.FC = () => {
                       <select 
                           value={filterPriority} 
                           onChange={(e) => setFilterPriority(e.target.value as Priority | 'All')}
-                          className="px-4 py-2.5 bg-slate-950 border border-slate-800 rounded-xl text-sm font-medium focus:outline-none focus:border-indigo-500 text-slate-300 cursor-pointer hover:bg-slate-900 transition-colors"
+                          className="px-5 py-3 bg-slate-950/50 border border-slate-800 rounded-2xl text-sm font-medium focus:outline-none focus:ring-2 focus:ring-indigo-500/30 text-slate-300 cursor-pointer hover:bg-slate-900 transition-colors shadow-sm min-w-[130px] appearance-none"
                       >
                           <option value="All">All Priorities</option>
                           <option value="low">Low</option>
@@ -409,7 +440,7 @@ const TodoDashboard: React.FC = () => {
                       <select 
                           value={sortBy} 
                           onChange={(e) => setSortBy(e.target.value as any)}
-                          className="px-4 py-2.5 bg-slate-950 border border-slate-800 rounded-xl text-sm font-medium focus:outline-none focus:border-indigo-500 text-slate-300 cursor-pointer hover:bg-slate-900 transition-colors"
+                          className="px-5 py-3 bg-slate-950/50 border border-slate-800 rounded-2xl text-sm font-medium focus:outline-none focus:ring-2 focus:ring-indigo-500/30 text-slate-300 cursor-pointer hover:bg-slate-900 transition-colors shadow-sm min-w-[140px] appearance-none"
                       >
                           <option value="createdAt">Newest First</option>
                           <option value="dueDate">Due Date</option>
@@ -420,7 +451,7 @@ const TodoDashboard: React.FC = () => {
            </div>
 
            {/* Task List */}
-           <div className="space-y-4 pb-20">
+           <div className="space-y-4 pb-32">
               {filteredTasks.length > 0 ? (
                 filteredTasks.map((task) => (
                   <TaskItem
@@ -441,12 +472,17 @@ const TodoDashboard: React.FC = () => {
                   />
                 ))
               ) : (
-                 <div className="flex flex-col items-center justify-center py-24 rounded-3xl border-2 border-dashed border-slate-800/50 text-center animate-enter bg-slate-900/20">
-                   <div className="w-24 h-24 bg-slate-900 rounded-full flex items-center justify-center mb-6 shadow-inner">
-                      <SearchIcon size={40} className="text-slate-700" />
+                 // Empty State
+                 <div className="flex flex-col items-center justify-center py-24 rounded-[2.5rem] border-2 border-dashed border-slate-800 bg-slate-900/20 text-center animate-enter group hover:border-slate-700 hover:bg-slate-900/30 transition-all">
+                   <div className="w-24 h-24 bg-slate-800/50 rounded-full flex items-center justify-center mb-6 shadow-inner group-hover:scale-110 transition-transform duration-500 ring-1 ring-white/5">
+                      <SearchIcon size={40} className="text-slate-600 group-hover:text-indigo-400 transition-colors" />
                    </div>
-                   <p className="text-2xl font-bold text-slate-500">No tasks found</p>
-                   <p className="text-slate-600 mt-2 max-w-xs mx-auto">Tasks matching your filters will appear here.</p>
+                   <p className="text-2xl font-bold text-slate-400 group-hover:text-slate-200 transition-colors">No tasks found</p>
+                   <p className="text-slate-600 mt-2 max-w-xs mx-auto">
+                     {searchQuery || hasActiveFilters 
+                       ? "Try adjusting your filters or search query." 
+                       : "Your list is empty! Start by adding a new task."}
+                   </p>
                  </div>
               )}
            </div>
