@@ -132,7 +132,14 @@ const TaskItem: React.FC<TaskItemProps> = ({
   const completedSubtasks = task.subtasks.filter(st => st.completed).length;
   const totalSubtasks = task.subtasks.length;
   
-  const dueDateStr = task.dueDate ? new Date(task.dueDate).toLocaleString(undefined, { month: 'short', day: 'numeric', hour: '2-digit', minute:'2-digit' }) : null;
+  const dueDateStr = task.dueDate ? new Date(task.dueDate).toLocaleString(undefined, { 
+    month: 'short', 
+    day: 'numeric', 
+    hour: 'numeric', 
+    minute: '2-digit',
+    hour12: true
+  }) : null;
+  
   const isOverdue = task.dueDate && task.dueDate < Date.now() && !task.completed;
 
   const checkboxTheme = priorityCheckboxColors[task.priority];
