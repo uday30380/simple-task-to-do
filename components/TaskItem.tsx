@@ -132,7 +132,7 @@ const TaskItem: React.FC<TaskItemProps> = ({
   const completedSubtasks = task.subtasks.filter(st => st.completed).length;
   const totalSubtasks = task.subtasks.length;
   
-  const dueDateStr = task.dueDate ? new Date(task.dueDate).toLocaleString(undefined, { 
+  const dueDateStr = task.dueDate ? new Date(task.dueDate).toLocaleString('en-US', { 
     month: 'short', 
     day: 'numeric', 
     hour: 'numeric', 
