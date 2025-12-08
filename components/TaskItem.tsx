@@ -137,6 +137,11 @@ const TaskItem: React.FC<TaskItemProps> = ({
 
   const checkboxTheme = priorityCheckboxColors[task.priority];
 
+  // Helper for hidden date input value
+  const isoDueDate = task.dueDate 
+    ? new Date(task.dueDate - (new Date().getTimezoneOffset() * 60000)).toISOString().slice(0, 16) 
+    : '';
+
   return (
     <div 
       className={`group flex flex-col bg-white dark:bg-slate-800 border border-slate-200 dark:border-slate-700 border-l-[4px] ${priorityBorderColors[task.priority]} rounded-2xl shadow-sm hover:shadow-lg transition-all duration-300 
@@ -263,6 +268,27 @@ const TaskItem: React.FC<TaskItemProps> = ({
            >
              {isExpanded ? <ChevronDownIcon size={18} /> : <ChevronRightIcon size={18} />}
            </button>
+           
+           {/* Quick Date Picker */}
+           <div className="relative group/date">
+              <button className="p-2 text-slate-400 hover:text-indigo-600 hover:bg-indigo-50 dark:hover:bg-indigo-900/30 rounded-lg transition-colors" title="Set Due Date">
+                <CalendarIcon size={18} />
+              </button>
+              <input 
+                type="datetime-local" 
+                value={isoDueDate}
+                onChange={(e) => {
+                    if (e.target.value) {
+                        onEdit(task.id, { dueDate: new Date(e.target.value).getTime() });
+                    } else {
+                        onEdit(task.id, { dueDate: undefined });
+                    }
+                }}
+                className="absolute inset-0 w-full h-full opacity-0 cursor-pointer"
+                onClick={(e) => e.stopPropagation()}
+              />
+           </div>
+
            <button onClick={() => onDuplicate(task.id)} className="p-2 text-slate-400 hover:text-indigo-600 hover:bg-indigo-50 dark:hover:bg-indigo-900/30 rounded-lg transition-colors" title="Duplicate">
              <CopyIcon size={18} />
            </button>
