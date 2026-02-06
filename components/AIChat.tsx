@@ -122,30 +122,41 @@ const AIChat: React.FC = () => {
   };
 
   const handleVoiceInput = () => {
-    if (!('webkitSpeechRecognition' in window)) {
-      alert("Voice input not supported in this browser.");
+    const SpeechRecognition = (window as any).SpeechRecognition || (window as any).webkitSpeechRecognition;
+    if (!SpeechRecognition) {
+      setError("Voice input is not supported in this browser.");
+      setTimeout(() => setError(null), 3000);
       return;
     }
-    const recognition = new (window as any).webkitSpeechRecognition();
+    const recognition = new SpeechRecognition();
     recognition.lang = 'en-US';
     recognition.onresult = (event: any) => {
       const transcript = event.results[0][0].transcript;
       setInput(transcript);
     };
+    recognition.onerror = () => {
+      setError("Voice input failed. Please try again.");
+      setTimeout(() => setError(null), 3000);
+    };
     recognition.start();
   };
 
+  const [showClearConfirm, setShowClearConfirm] = useState(false);
+
   const clearChat = () => {
-    if (confirm('Are you sure you want to clear the chat history?')) {
-      const welcomeMessage: Message = {
-        id: crypto.randomUUID(),
-        role: 'assistant',
-        content: 'Chat cleared! How can I help you today?',
-        timestamp: Date.now()
-      };
-      setMessages([welcomeMessage]);
-      localStorage.removeItem('ai-chat-messages');
-    }
+    setShowClearConfirm(true);
+  };
+
+  const confirmClearChat = () => {
+    const welcomeMessage: Message = {
+      id: crypto.randomUUID(),
+      role: 'assistant',
+      content: 'Chat cleared! How can I help you today?',
+      timestamp: Date.now()
+    };
+    setMessages([welcomeMessage]);
+    localStorage.removeItem('ai-chat-messages');
+    setShowClearConfirm(false);
   };
 
   return (
@@ -168,6 +179,32 @@ const AIChat: React.FC = () => {
 
       {/* Chat Container */}
       <div className="flex-1 flex flex-col bg-slate-900/80 backdrop-blur-2xl rounded-[2.5rem] border border-slate-800 shadow-2xl overflow-hidden">
+        
+        {/* Clear Confirmation Modal */}
+        {showClearConfirm && (
+          <div className="absolute inset-0 bg-black/50 backdrop-blur-sm flex items-center justify-center z-50 animate-fade-in">
+            <div className="bg-slate-900 border border-slate-700 rounded-2xl p-6 max-w-sm mx-4 shadow-2xl">
+              <h3 className="text-xl font-bold text-white mb-2">Clear Chat History?</h3>
+              <p className="text-slate-400 text-sm mb-6">
+                This will permanently delete all messages in this conversation.
+              </p>
+              <div className="flex gap-3">
+                <button
+                  onClick={() => setShowClearConfirm(false)}
+                  className="flex-1 px-4 py-2.5 bg-slate-800 hover:bg-slate-700 text-slate-200 rounded-xl transition-all font-medium"
+                >
+                  Cancel
+                </button>
+                <button
+                  onClick={confirmClearChat}
+                  className="flex-1 px-4 py-2.5 bg-red-600 hover:bg-red-500 text-white rounded-xl transition-all font-medium"
+                >
+                  Clear Chat
+                </button>
+              </div>
+            </div>
+          </div>
+        )}
         
         {/* Messages Area */}
         <div className="flex-1 overflow-y-auto p-6 space-y-4 custom-scrollbar">
