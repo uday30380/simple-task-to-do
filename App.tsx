@@ -2,9 +2,10 @@ import React, { useState } from 'react';
 import TodoDashboard from './components/TodoDashboard';
 import Why from './components/Why';
 import Contact from './components/Contact';
-import { HomeIcon, InfoIcon, PhoneIcon } from './components/Icons';
+import AIChat from './components/AIChat';
+import { HomeIcon, InfoIcon, PhoneIcon, MessageSquareIcon } from './components/Icons';
 
-type View = 'home' | 'why' | 'contact';
+type View = 'home' | 'why' | 'contact' | 'ai-chat';
 
 const App: React.FC = () => {
   const [currentView, setCurrentView] = useState<View>('home');
@@ -24,11 +25,12 @@ const App: React.FC = () => {
         {currentView === 'home' && <TodoDashboard />}
         {currentView === 'why' && <Why />}
         {currentView === 'contact' && <Contact />}
+        {currentView === 'ai-chat' && <AIChat />}
       </main>
 
       {/* Bottom Navigation Bar */}
       <nav className="fixed bottom-0 left-0 right-0 bg-slate-900/80 backdrop-blur-lg border-t border-slate-800 pb-safe pt-2 z-50">
-        <div className="max-w-md mx-auto flex justify-around items-center px-4 h-16">
+        <div className="max-w-2xl mx-auto flex justify-around items-center px-4 h-16">
           <button 
             onClick={() => setCurrentView('home')}
             className={`flex flex-col items-center gap-1 p-2 rounded-xl transition-all duration-300 w-20 ${currentView === 'home' ? 'text-indigo-400' : 'text-slate-500 hover:text-slate-300'}`}
@@ -37,6 +39,16 @@ const App: React.FC = () => {
               <HomeIcon size={24} className={currentView === 'home' ? 'fill-indigo-500/20' : ''} />
             </div>
             <span className="text-[10px] font-bold tracking-wide">Home</span>
+          </button>
+
+          <button 
+            onClick={() => setCurrentView('ai-chat')}
+            className={`flex flex-col items-center gap-1 p-2 rounded-xl transition-all duration-300 w-20 ${currentView === 'ai-chat' ? 'text-indigo-400' : 'text-slate-500 hover:text-slate-300'}`}
+          >
+            <div className={`p-1.5 rounded-full transition-all ${currentView === 'ai-chat' ? 'bg-indigo-500/20 translate-y-[-2px]' : ''}`}>
+              <MessageSquareIcon size={24} />
+            </div>
+            <span className="text-[10px] font-bold tracking-wide">AI Chat</span>
           </button>
 
           <button 
